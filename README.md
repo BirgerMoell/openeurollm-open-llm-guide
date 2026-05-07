@@ -13,9 +13,9 @@ Public website and PDF for an academic-style technical guide to training fully o
 
 The guide covers data governance, corpus curation, multilingual mixture design, tokenizer validation, architecture choices, scaling laws, HPC training, pretraining, long-context adaptation, post-training, reasoning training, GRPO/RLHF/DPO/RLVR, agent capability training, evaluation, safety, release engineering, and reproducibility.
 
-## Public-Safety Note
+## Publication Note
 
-This repository contains a public-safe edition. Private/local knowledge-base attribution, non-final internal workstream status, draft compute-request details, and internal-state infographics were excluded before publication.
+This repository contains the richer guide edition with OpenEuroLLM working-context material and project-state infographics. Before publication, the files were checked for obvious hard secrets such as credentials, local filesystem paths, host addresses, and API tokens.
 
 ## License
 

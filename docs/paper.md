@@ -12,9 +12,11 @@ large language model in 2026. It is grounded in the OpenEuroLLM public mission:
 transparent, compliant, open-source multilingual foundation models for Europe
 and beyond, with open documentation, training and testing code, evaluation
 metrics, intermediate results, and community involvement
-[@openeurollm_official_2026; @ai_sweden_openeurollm_2026]. This public edition
-uses OpenEuroLLM as an illustrative target for open, multilingual, European
-foundation-model engineering and avoids non-public project status claims.
+[@openeurollm_official_2026; @ai_sweden_openeurollm_2026]. It also incorporates
+local OpenEuroLLM knowledge-base status as of late April 2026, including active
+work on HPLT 4.0 processing, dataset composition, HPC setup standardization,
+model-card reuse, multilingual evaluation integration, long-context/refinement
+planning, and compute-access applications [@open_eurollm_kb_2026].
 
 The guide covers the full lifecycle: project governance, data acquisition,
 curation, multilingual mixture design, tokenizer training, architecture
@@ -86,22 +88,37 @@ being evaluated mostly in English. It can be safe in English but brittle in
 lower-resource languages. It can score well on static benchmarks while failing
 as a tool-using agent. The engineering task is therefore a systems problem.
 
-## 1.3 Public-Safe OpenEuroLLM Working Context
+## 1.3 OpenEuroLLM Current Working Context
 
-This public edition intentionally avoids non-public status details,
-communications, draft compute requests, and non-final workstream claims. It
-instead frames OpenEuroLLM as an example of the broader problem of building
-transparent, reproducible, multilingual, open foundation models under European
-governance expectations.
+The local OpenEuroLLM KB snapshot suggests the following current working
+picture [@open_eurollm_kb_2026]:
 
-The actionable public lessons are:
+- WP3 training data work is active. Full English HPLT 4.0 processing was delayed
+  by OOM issues in some batches, while larger AB samples were available and jobs
+  were being rerun toward a complete release preview.
+- T4.3 dataset composition and processing is revising priorities as data
+  availability changes. Annotation capacity is being assessed, and BSC-edu or
+  FineWeb-edu-style filtering is under consideration.
+- WP4 model building is standardizing training setup across LUMI, Leonardo, MN5,
+  and eventually all four systems. Leonardo Qwen3-like configs exist, but were
+  described as not the most up to date; MN5 configs and LUMI scripts require
+  careful adaptation.
+- Model card work is using existing Hugging Face cards as templates, with
+  required changes to datasets, language metadata, training data, and logs.
+- T4.2 model exploration/scaling-law work is focusing on what is integrated into
+  `oellm-cli`, with multilingual evaluation task selection still needing
+  clarity.
+- MultiSynt/evaluation work has early tasks such as `belebele_cf` and
+  `arc_challenge_mt`, with more integration planned.
+- T4.6 long-context/refinement discussion is active. Efficient inter-document
+  masking, FlashAttention support, TRL/Open-Instruct support, and post-training
+  compute constraints matter.
+- Compute applications are under active review. One draft discussed an ambitious
+  8M GPU-hour request, possible allocation reduction risk, pretraining and
+  post-training balance, and a 9B/10TT pretraining estimate at 300 TFLOPS.
 
-- Treat data, model, evaluation, and release work as one auditable system.
-- Keep multilingual coverage visible at every stage rather than reporting only
-  aggregate metrics.
-- Standardize training recipes across heterogeneous HPC environments.
-- Separate development signals from publication-ready claims.
-- Release artifacts with enough context for independent review and reuse.
+This snapshot should be treated as internal working-state context, not as a
+final public OpenEuroLLM claim.
 
 # 2. End-To-End Lifecycle
 
@@ -372,15 +389,17 @@ For an OpenEuroLLM-style project, the data stage should produce:
 
 - HPLT 4.0 processing status by language and batch.
 - AB sample availability and quality summary.
-- Failure report and rerun plan for any unstable processing batches.
+- OOM failure report and rerun plan.
 - German/Spanish release-preview status and annotation integration plan.
 - BSC-edu/FineWeb-edu/OpenEuroLLM-native annotator comparison.
 - Annotation capacity table by language, domain, and time.
 - Locked validation split for scaling-law experiments.
 - Data-card draft for every mixture version.
 
-Any instability in large-batch processing should be treated as a visible risk
-register item rather than a hidden data-engineering detail.
+The local KB suggests that full English HPLT 4.0 processing was delayed by OOM
+issues while larger AB samples were available; this should be treated as a
+visible risk register item rather than a hidden data-engineering detail
+[@open_eurollm_kb_2026].
 
 # 6. Tokenizer Design
 
@@ -565,8 +584,8 @@ remain relevant for efficient long-context modeling, but for a fully open
 general-purpose multilingual LLM in 2026, the safest baseline is still
 Transformer-first because tooling, transfer recipes, evaluation, quantization,
 and serving are more mature. Hybrid models are worth a research track, not the
-first production-scale OpenEuroLLM backbone unless the team has strong
-project-specific expertise.
+first production-scale OpenEuroLLM backbone unless the team has strong internal
+expertise.
 
 ## 7.6 Recommended Architecture Portfolio
 
@@ -654,15 +673,17 @@ Do not use a single validation loss. Use a dashboard:
 - Instruction-like text.
 - Long documents.
 
-Scaling-law results are only useful if validation is locked, representative,
-and reproducible.
+The local KB indicates T4.2 work is focusing on `oellm-cli` integration and
+validation-split work. That is correct: scaling-law results are only useful if
+validation is locked, representative, and reproducible [@open_eurollm_kb_2026].
 
 # 9. Infrastructure And Distributed Training
 
 ## 9.1 HPC Target Reality
 
-OpenEuroLLM-like training happens across heterogeneous EuroHPC systems such as
-LUMI, Leonardo, MN5, and future project systems. Hardware differences matter:
+OpenEuroLLM-like training happens across heterogeneous EuroHPC systems. The
+local KB mentions LUMI, Leonardo, MN5, and eventually standardization across
+four systems [@open_eurollm_kb_2026]. Hardware differences matter:
 
 - GPU memory: 64GB vs 80GB vs 96GB changes feasible model parallelism.
 - Interconnect: affects tensor, pipeline, expert, and data parallelism.
@@ -751,10 +772,10 @@ The base objective remains autoregressive next-token prediction:
 Use packed sequences to reduce padding waste. But packing creates document
 boundary issues. For long-context training, efficient inter-document masking may
 matter because compute depends on actual document length statistics, not merely
-maximum context length. If documents are packed without masking, the model may
-learn cross-document artifacts. If masking is naive, it may waste attention
-compute. If masking is efficient and framework-supported, it can improve both
-quality and cost.
+maximum context length [@open_eurollm_kb_2026]. If documents are packed without
+masking, the model may learn cross-document artifacts. If masking is naive, it
+may waste attention compute. If masking is efficient and framework-supported,
+it can improve both quality and cost.
 
 ## 10.2 Hyperparameters
 
@@ -894,10 +915,10 @@ boundaries:
 A_{ij}=1 \quad \text{iff} \quad j \le i \text{ and } doc(i)=doc(j).
 \]
 
-Efficient implementation is non-trivial. If efficient inter-document masking is
-supported, compute can depend on document length statistics such as mean \(\mu\)
-and variance \(\sigma^2\), not only maximum context. This should be tested in
-the actual framework.
+Efficient implementation is non-trivial. The local KB notes that if efficient
+inter-document masking is supported, compute can depend on document length
+statistics such as mean \(\mu\) and variance \(\sigma^2\), not only maximum
+context [@open_eurollm_kb_2026]. This should be tested in the actual framework.
 
 # 12. Post-Training Overview
 
@@ -1353,9 +1374,10 @@ Evaluate:
 
 ## 18.2 Multilingual Evaluation
 
-For OpenEuroLLM-style multilingual evaluation, synthetic fallback resources
-should require native-speaker validation before publishable claims. Make
-evaluation status explicit:
+The local wiki notes a OneRuler-OELLM fork for 38 tokenizer languages, with
+synthetic fallback resources that need native-speaker validation before
+publishable claims. This is the right discipline. Make evaluation status
+explicit:
 
 - Native validated.
 - Professional translation.
@@ -1471,9 +1493,8 @@ This supports mechanistic interpretability, data studies, and reproducibility.
 
 ## 20.1 Immediate
 
-- Stabilize large-scale corpus processing and document rerun plans.
-- Publish a data status dashboard by language and batch when the information is
-  approved for public release.
+- Stabilize HPLT 4.0 processing and document OOM rerun plan.
+- Publish internal data status dashboard by language and batch.
 - Lock validation split for scaling laws.
 - Standardize training configs across LUMI, Leonardo, MN5, and the fourth
   system.
