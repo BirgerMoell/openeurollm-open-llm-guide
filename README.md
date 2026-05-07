@@ -2,6 +2,8 @@
 
 Public website and PDF for an academic-style technical guide to training fully open, multilingual foundation models in 2026, written for OpenEuroLLM-scale work.
 
+The current edition uses the shock-pink editorial cover and matching web theme.
+
 ## Read
 
 - Website: GitHub Pages after deployment

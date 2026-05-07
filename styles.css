@@ -1,14 +1,15 @@
 :root {
   color-scheme: light;
-  --ink: #101827;
-  --muted: #526172;
-  --blue: #0c3d8a;
-  --blue-2: #0f62b8;
-  --green: #2f7d46;
-  --line: #d9e2ef;
+  --pink: #f75cac;
+  --pink-2: #ff72bd;
+  --pink-3: #ef4fa3;
+  --ink: #11182c;
+  --blue: #064c93;
+  --blue-2: #0c6bb6;
+  --muted: #596275;
+  --line: #f3c0dc;
   --panel: #ffffff;
-  --wash: #f4f8fc;
-  --gold: #d89a1d;
+  --wash: #fff6fb;
 }
 
 * {
@@ -21,7 +22,9 @@ body {
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   color: var(--ink);
-  background: var(--wash);
+  background:
+    radial-gradient(circle at 92% 2%, rgba(255, 114, 189, 0.22), transparent 28rem),
+    linear-gradient(180deg, #fff7fc 0%, #ffffff 42%, #fff6fb 100%);
   line-height: 1.5;
 }
 
@@ -30,11 +33,11 @@ a {
 }
 
 .hero {
-  min-height: 92vh;
-  color: #fff;
+  min-height: 94vh;
+  color: var(--ink);
   background:
-    radial-gradient(circle at 80% 10%, rgba(83, 177, 117, 0.28), transparent 30%),
-    linear-gradient(135deg, #06142b 0%, #0b3477 54%, #0a6247 100%);
+    radial-gradient(circle at 84% 8%, rgba(255, 255, 255, 0.22), transparent 26%),
+    linear-gradient(145deg, var(--pink-2) 0%, var(--pink) 45%, var(--pink-3) 100%);
   overflow: hidden;
 }
 
@@ -44,20 +47,23 @@ a {
   justify-content: space-between;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 28px 24px;
 }
 
 .brand {
-  font-weight: 800;
+  color: #fff;
+  font-weight: 900;
   text-decoration: none;
-  letter-spacing: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .nav-links {
   display: flex;
   gap: 18px;
-  color: rgba(255, 255, 255, 0.84);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
+  font-weight: 750;
 }
 
 .nav-links a {
@@ -66,25 +72,33 @@ a {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
   gap: 44px;
   align-items: center;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 54px 24px 70px;
+  padding: 70px 24px 84px;
 }
 
 .hero-copy {
-  max-width: 640px;
+  max-width: 680px;
 }
 
 .eyebrow {
-  margin: 0 0 10px;
-  color: var(--gold);
-  font-size: 0.82rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  margin: 0 0 28px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+}
+
+.title-rule {
+  width: min(100%, 640px);
+  height: 5px;
+  margin: 0 0 28px;
+  background: var(--blue);
+  border-radius: 999px;
 }
 
 h1,
@@ -95,17 +109,41 @@ p {
 }
 
 h1 {
-  margin-bottom: 22px;
-  font-size: clamp(3rem, 7vw, 6.4rem);
-  line-height: 0.95;
+  max-width: 780px;
+  margin-bottom: 28px;
+  color: var(--ink);
+  font-size: clamp(3.4rem, 7.7vw, 7.2rem);
+  font-weight: 950;
+  line-height: 0.98;
   letter-spacing: 0;
 }
 
 .lead {
-  max-width: 560px;
-  margin-bottom: 30px;
-  color: rgba(255, 255, 255, 0.84);
-  font-size: 1.22rem;
+  max-width: 720px;
+  margin-bottom: 28px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: clamp(1.18rem, 2.2vw, 1.74rem);
+  line-height: 1.48;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 34px;
+}
+
+.chips span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 850;
+  white-space: nowrap;
 }
 
 .actions {
@@ -118,31 +156,32 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 46px;
-  padding: 0 18px;
+  min-height: 48px;
+  padding: 0 20px;
   border: 1px solid transparent;
   border-radius: 8px;
-  font-weight: 800;
+  font-weight: 900;
   text-decoration: none;
 }
 
 .button.primary {
-  background: #fff;
-  color: var(--blue);
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 18px 38px rgba(17, 24, 44, 0.24);
 }
 
 .button.secondary {
-  border-color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.48);
   color: #fff;
 }
 
 .hero-visual {
   margin: 0;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 10px;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 28px 78px rgba(87, 13, 55, 0.25);
 }
 
 .hero-visual img {
@@ -153,7 +192,7 @@ h1 {
 }
 
 main {
-  background: var(--wash);
+  background: transparent;
 }
 
 .band,
@@ -164,13 +203,17 @@ main {
 }
 
 .section-head {
-  max-width: 720px;
+  max-width: 760px;
   margin-bottom: 26px;
+}
+
+main .eyebrow {
+  color: var(--pink-3);
 }
 
 h2 {
   margin-bottom: 14px;
-  color: #0a2857;
+  color: var(--ink);
   font-size: clamp(2rem, 4vw, 3.2rem);
   line-height: 1.05;
   letter-spacing: 0;
@@ -184,10 +227,10 @@ h2 {
 
 .topics article,
 .download {
-  background: var(--panel);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 18px 44px rgba(16, 24, 39, 0.06);
+  box-shadow: 0 20px 52px rgba(135, 31, 91, 0.1);
 }
 
 .topics article {
@@ -211,6 +254,9 @@ h3 {
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 64px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 246, 251, 0.94)),
+    radial-gradient(circle at 92% 0%, rgba(247, 92, 172, 0.22), transparent 20rem);
 }
 
 .download > div {
@@ -228,8 +274,8 @@ footer {
   justify-content: space-between;
   gap: 20px;
   padding: 26px 24px;
-  color: #dbe7f5;
-  background: #071733;
+  color: #ffe8f5;
+  background: var(--ink);
 }
 
 footer a {
@@ -267,11 +313,15 @@ footer a {
 
   .hero-grid {
     grid-template-columns: 1fr;
-    padding-top: 30px;
+    padding-top: 34px;
   }
 
   h1 {
-    font-size: 3.25rem;
+    font-size: 3.45rem;
+  }
+
+  .chips span {
+    white-space: normal;
   }
 
   .topics {
