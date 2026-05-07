@@ -47,7 +47,7 @@ a {
   justify-content: space-between;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 22px 24px;
+  padding: 20px 24px;
 }
 
 .brand {
@@ -72,21 +72,21 @@ a {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(440px, 0.9fr) minmax(430px, 1.1fr);
-  gap: 36px;
+  grid-template-columns: minmax(500px, 1fr) minmax(440px, 0.96fr);
+  gap: 58px;
   align-items: center;
   max-width: 1180px;
   margin: 0 auto;
-  min-height: calc(100vh - 88px);
-  padding: 26px 24px 50px;
+  min-height: calc(100vh - 78px);
+  padding: 18px 24px 46px;
 }
 
 .hero-copy {
-  max-width: 610px;
+  max-width: 660px;
 }
 
 .eyebrow {
-  margin: 0 0 18px;
+  margin: 0 0 16px;
   color: rgba(255, 255, 255, 0.88);
   font-size: 0.82rem;
   font-weight: 900;
@@ -97,7 +97,7 @@ a {
 .title-rule {
   width: min(100%, 520px);
   height: 4px;
-  margin: 0 0 22px;
+  margin: 0 0 20px;
   background: var(--blue);
   border-radius: 0;
 }
@@ -111,40 +111,41 @@ p {
 
 h1 {
   max-width: 620px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   color: var(--ink);
-  font-size: clamp(3.15rem, 5.55vw, 5.9rem);
+  font-size: clamp(2.95rem, 4.65vw, 4.95rem);
   font-weight: 950;
-  line-height: 0.96;
+  line-height: 1;
   letter-spacing: 0;
 }
 
 .lead {
-  max-width: 610px;
-  margin-bottom: 22px;
+  max-width: 570px;
+  margin-bottom: 42px;
   color: rgba(255, 255, 255, 0.95);
-  font-size: clamp(1.06rem, 1.35vw, 1.28rem);
-  line-height: 1.5;
+  font-size: clamp(1.14rem, 1.45vw, 1.36rem);
+  line-height: 1.44;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  max-width: 560px;
 }
 
 .chips span {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
-  padding: 0 14px;
+  padding: 0 15px;
   border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: 999px;
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
   font-weight: 850;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   white-space: nowrap;
 }
 
@@ -173,26 +174,28 @@ h1 {
 }
 
 .button.secondary {
-  border-color: rgba(255, 255, 255, 0.48);
+  border-color: transparent;
   color: #fff;
+  padding-inline: 10px;
 }
 
 .hero-visual {
   margin: 0;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.36);
   border-radius: 10px;
-  box-shadow: 0 28px 78px rgba(87, 13, 55, 0.25);
-  transform: translateY(10px);
+  box-shadow: 0 30px 82px rgba(87, 13, 55, 0.24);
+  transform: translateY(2px);
 }
 
 .hero-visual img {
   display: block;
   width: 100%;
-  height: min(56vh, 520px);
-  object-fit: cover;
-  object-position: center top;
+  height: min(46vh, 430px);
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
   border-radius: 6px;
 }
 
