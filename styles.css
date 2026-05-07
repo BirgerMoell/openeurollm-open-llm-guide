@@ -33,7 +33,7 @@ a {
 }
 
 .hero {
-  min-height: 94vh;
+  min-height: 100vh;
   color: var(--ink);
   background:
     radial-gradient(circle at 84% 8%, rgba(255, 255, 255, 0.22), transparent 26%),
@@ -47,7 +47,7 @@ a {
   justify-content: space-between;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 28px 24px;
+  padding: 22px 24px;
 }
 
 .brand {
@@ -72,33 +72,34 @@ a {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 1.08fr);
-  gap: 44px;
+  grid-template-columns: minmax(440px, 0.9fr) minmax(430px, 1.1fr);
+  gap: 36px;
   align-items: center;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 70px 24px 84px;
+  min-height: calc(100vh - 88px);
+  padding: 26px 24px 50px;
 }
 
 .hero-copy {
-  max-width: 680px;
+  max-width: 610px;
 }
 
 .eyebrow {
-  margin: 0 0 28px;
+  margin: 0 0 18px;
   color: rgba(255, 255, 255, 0.88);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 900;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .title-rule {
-  width: min(100%, 640px);
-  height: 5px;
-  margin: 0 0 28px;
+  width: min(100%, 520px);
+  height: 4px;
+  margin: 0 0 22px;
   background: var(--blue);
-  border-radius: 999px;
+  border-radius: 0;
 }
 
 h1,
@@ -109,40 +110,41 @@ p {
 }
 
 h1 {
-  max-width: 780px;
-  margin-bottom: 28px;
+  max-width: 620px;
+  margin-bottom: 20px;
   color: var(--ink);
-  font-size: clamp(3.4rem, 7.7vw, 7.2rem);
+  font-size: clamp(3.15rem, 5.55vw, 5.9rem);
   font-weight: 950;
-  line-height: 0.98;
+  line-height: 0.96;
   letter-spacing: 0;
 }
 
 .lead {
-  max-width: 720px;
-  margin-bottom: 28px;
+  max-width: 610px;
+  margin-bottom: 22px;
   color: rgba(255, 255, 255, 0.95);
-  font-size: clamp(1.18rem, 2.2vw, 1.74rem);
-  line-height: 1.48;
+  font-size: clamp(1.06rem, 1.35vw, 1.28rem);
+  line-height: 1.5;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 34px;
+  gap: 9px;
+  margin-bottom: 24px;
 }
 
 .chips span {
   display: inline-flex;
   align-items: center;
-  min-height: 42px;
-  padding: 0 18px;
+  min-height: 36px;
+  padding: 0 14px;
   border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: 999px;
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
   font-weight: 850;
+  font-size: 0.92rem;
   white-space: nowrap;
 }
 
@@ -156,8 +158,8 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 20px;
+  min-height: 44px;
+  padding: 0 18px;
   border: 1px solid transparent;
   border-radius: 8px;
   font-weight: 900;
@@ -177,17 +179,20 @@ h1 {
 
 .hero-visual {
   margin: 0;
-  padding: 16px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 10px;
   box-shadow: 0 28px 78px rgba(87, 13, 55, 0.25);
+  transform: translateY(10px);
 }
 
 .hero-visual img {
   display: block;
   width: 100%;
-  height: auto;
+  height: min(56vh, 520px);
+  object-fit: cover;
+  object-position: center top;
   border-radius: 6px;
 }
 
@@ -298,6 +303,24 @@ footer a {
   .download {
     align-items: flex-start;
   }
+
+  .hero {
+    min-height: auto;
+  }
+
+  .hero-grid {
+    min-height: 0;
+    padding-top: 34px;
+  }
+
+  .hero-visual {
+    transform: none;
+  }
+
+  .hero-visual img {
+    height: auto;
+    max-height: none;
+  }
 }
 
 @media (max-width: 620px) {
@@ -313,11 +336,11 @@ footer a {
 
   .hero-grid {
     grid-template-columns: 1fr;
-    padding-top: 34px;
+    padding-top: 24px;
   }
 
   h1 {
-    font-size: 3.45rem;
+    font-size: 3.1rem;
   }
 
   .chips span {
