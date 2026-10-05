@@ -4,7 +4,7 @@ Public website and PDF for Birger Moëll's technical field guide to training ful
 
 The October 2026 edition uses the shock-pink editorial cover and matching web theme. It distinguishes public experimental artifacts from formal deliverables and links directly to the relevant OpenEuroLLM repositories and Hugging Face cards.
 
-The site opens with a research brief built around the public 9B SFT model card and a proposed controlled multilingual RLVR experiment. The interactive ecosystem explorer in `index.html` and `ecosystem.js` covers 16 public repositories, datasets, tokenizers and models. It offers three example workflows, stage filters, search and source-linked details. The PDF includes the same research brief and a repository field guide in `docs/paper.md`.
+The site opens with the public artifact update, then an interactive ecosystem explorer in `index.html` and `ecosystem.js` covering 16 repositories, datasets, tokenizers and models. It offers three example workflows, stage filters, search and source-linked details. A later research brief tracks four dated LUMI post-training streams: reasoning SFT, DPO, verifiable-reward RL and tool calling. The PDF includes the same active-work brief and a repository field guide in `docs/paper.md`.
 
 ## Read
 
@@ -19,7 +19,7 @@ The guide covers data governance, corpus curation, multilingual mixture design, 
 
 ## Publication Note
 
-The manuscript grounds project-status claims in dated public sources and separates released evidence from proposed experiments and formal deliverables. This is an independent guide, not an official OpenEuroLLM project deliverable. The PDF is generated from the manuscript in `../openeurollm-fully-open-llm-guide-2026/` and copied into `docs/`.
+The manuscript grounds project-status claims in dated public sources and distinguishes released evidence, live experiment status and formal deliverables. LUMI-only observations are labeled provisional until their full run artifacts are public. This is an independent guide, not an official OpenEuroLLM project deliverable. The PDF is generated from the manuscript in `../openeurollm-fully-open-llm-guide-2026/` and copied into `docs/`.
 
 ## License
 

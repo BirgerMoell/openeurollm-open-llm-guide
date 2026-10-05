@@ -17,7 +17,7 @@
     <meta property="og:title" content="The 2026 Fully Open LLM Training Guide" />
     <meta
       property="og:description"
-      content="A source-grounded field guide with a concrete post-training research brief, public artifact map and reproducible release standard."
+      content="A source-grounded field guide with active LUMI post-training work, a public artifact map and a reproducible release standard."
     />
     <meta property="og:url" content="https://birgermoell.github.io/openeurollm-open-llm-guide/" />
     <meta property="og:image" content="https://birgermoell.github.io/openeurollm-open-llm-guide/assets/social-card.png" />
@@ -41,11 +41,11 @@
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="./">Fully Open LLM Guide</a>
         <div class="nav-links">
-          <a href="#research">Research brief</a>
+          <a href="#current">2026 update</a>
           <a href="#explore">Artifact map</a>
+          <a href="#research">Active work</a>
           <a href="docs/fully-open-llm-guide-2026.pdf">PDF</a>
           <a href="docs/paper.md">Markdown</a>
-          <a href="#current">2026 update</a>
           <a href="docs/references.bib">Citations</a>
         </div>
       </nav>
@@ -67,7 +67,7 @@
             <span>Open release</span>
           </div>
           <div class="actions">
-            <a class="button primary" href="#research">Start with the research brief</a>
+            <a class="button primary" href="#explore">Explore the artifact map</a>
             <a class="button secondary" href="docs/fully-open-llm-guide-2026.pdf">Read the PDF</a>
           </div>
         </div>
@@ -78,45 +78,6 @@
     </header>
 
     <main>
-      <section class="research band" id="research" aria-labelledby="research-title">
-        <div class="section-head research-head">
-          <p class="eyebrow">Research brief · a released checkpoint</p>
-          <h2 id="research-title">From a model card to a better experiment</h2>
-          <p>The public <a href="https://huggingface.co/openeurollm/oellm-9b-256k-sft">OpenEuroLLM 9B SFT card</a> reports enough detail to test its claims and design the next study. Three details matter more than a headline score.</p>
-        </div>
-        <div class="evidence-grid">
-          <article class="evidence-card">
-            <p class="evidence-label">The effective mixture</p>
-            <p class="evidence-value">18.77% <span>of rows</span><br/>64.41% <span>of tokens</span></p>
-            <p>The Nemotron math slice dominated the tokenized pool despite being less than a fifth of source conversations. Report token exposure alongside row shares.</p>
-          </article>
-          <article class="evidence-card">
-            <p class="evidence-label">Training vs configuration</p>
-            <p class="evidence-value">4K <span>SFT sequence</span><br/>256K <span>context setting</span></p>
-            <p>Short-sequence SFT and an architectural context limit answer different questions. Test useful behavior at each length.</p>
-          </article>
-          <article class="evidence-card">
-            <p class="evidence-label">What the probe showed</p>
-            <p class="evidence-value">40/40 <span>retrieval</span><br/>0/5 <span>exact format at 128K</span></p>
-            <p>Natural-word single-needle retrieval held across tested lengths. Exact-format compliance fell at long lengths; this does not establish synthesis or reasoning quality.</p>
-          </article>
-        </div>
-        <div class="experiment-panel">
-          <div>
-            <p class="micro-label">Proposed controlled study</p>
-            <h3>Can multilingual RLVR improve math without eroding general behavior?</h3>
-            <p>Start from one immutable 9B SFT revision. Curate a <a href="https://huggingface.co/datasets/openeurollm/oellm-math-rlvr">math RLVR</a> slice with group-separated holdouts and audited verifiers. Compare the frozen checkpoint, an equal-budget continued-SFT control and the RLVR treatment.</p>
-            <p class="experiment-note">This is a proposed experiment, not a claim that this training run has happened.</p>
-          </div>
-          <div class="protocol-list">
-            <div><span>01 / Freeze</span><p>Pin model, tokenizer, dataset, verifier, reward, budget and evaluation revisions.</p></div>
-            <div><span>02 / Measure</span><p>Report held-out pass@1 by language, verifier errors, invalid outputs, instruction and safety regressions.</p></div>
-            <div><span>03 / Release</span><p>Share configs, data manifests, logs, intermediate checkpoints, raw generations and failures.</p></div>
-          </div>
-        </div>
-        <p class="research-source">Source: <a href="https://huggingface.co/openeurollm/oellm-9b-256k-sft">9B SFT model card</a>. Its run used no held-out validation split from the SFT sources; training loss alone cannot establish generalization. The full protocol and limits are in the PDF.</p>
-      </section>
-
       <section class="current band" id="current" aria-labelledby="current-title">
         <div class="section-head">
           <p class="eyebrow">Public artifact check · 5 October 2026</p>
@@ -179,6 +140,57 @@
         <p class="status-note">Checked against public repository READMEs and Hugging Face cards on 5 October 2026. Dataset inclusion in this directory does not establish use in a released model.</p>
       </section>
 
+      <section class="research band" id="research" aria-labelledby="research-title">
+        <div class="section-head research-head">
+          <p class="eyebrow">Research brief · active work on LUMI</p>
+          <h2 id="research-title">Four post-training tracks, each with a decision gate</h2>
+          <p>These are Birger Moëll's current experiments using OpenEuroLLM checkpoints, datasets and tooling. The statuses are a 5 October 2026 LUMI snapshot; experimental checkpoints and queued jobs are separate from formal project releases.</p>
+        </div>
+        <div class="active-grid">
+          <article class="active-card">
+            <div class="active-card-top"><span class="active-index">01 / Reasoning SFT</span><span class="active-status">Published v1 · new run in recovery</span></div>
+            <h3>Reasoning with retention</h3>
+            <p>The <a href="https://huggingface.co/birgermoell/oellm-9b-256k-reasoning-v1">2,000-step experimental checkpoint</a> improved some reasoning tests but regressed GSM8K, IFEval and a code-related knowledge task. A new <a href="https://github.com/BirgerMoell/oellm-reasoning-training">524M-token continuation</a> mixes translated reasoning with instruction replay; its latest launch stopped at chat-template validation before training.</p>
+            <p class="active-gate"><strong>Next gate</strong> Validate the loss mask, then compare reasoning, ordinary instructions, language behavior and repetition loops against the pinned parent.</p>
+          </article>
+          <article class="active-card">
+            <div class="active-card-top"><span class="active-index">02 / DPO</span><span class="active-status">Training · evaluation pending</span></div>
+            <h3>Preferences across three sources</h3>
+            <p>A four-node 9B DPO run is training on about 1.48M staged pairs from <a href="https://huggingface.co/datasets/openeurollm/Dolci-Instruct-DPO-translated">translated Dolci</a>, <a href="https://huggingface.co/datasets/nvidia/HelpSteer3">HelpSteer3</a> and <a href="https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned">UltraFeedback</a>. Dolci dominates the natural-size mix. A step-9,000 snapshot exists, but training preference accuracy is not a held-out result.</p>
+            <p class="active-gate"><strong>Next gate</strong> Compare the checkpoint with its unchanged SFT parent on held-out preference pairs and general behavior by language.</p>
+          </article>
+          <article class="active-card">
+            <div class="active-card-top"><span class="active-index">03 / RLVR</span><span class="active-status">64 updates evaluated · longer run queued</span></div>
+            <h3>Does verifiable math reward transfer?</h3>
+            <p>The public <a href="https://huggingface.co/birgermoell/oellm-9b-math-rlvr-phase-a-32step-experimental">Phase A checkpoint</a> anchors a completed 64-update qualification. Its final export reached 45.12% on a 512-prompt multilingual procedural holdout, but 4.00% on a harder 1,024-prompt external-family diagnostic. A <a href="https://github.com/BirgerMoell/oellm-rlvr">10,000-problem survey and 256-update follow-up</a> are queued, with no result claimed.</p>
+            <p class="active-gate"><strong>Next gate</strong> Audit verifier and semantic-group separation, then require paired gains without harder-set regressions.</p>
+          </article>
+          <article class="active-card">
+            <div class="active-card-top"><span class="active-index">04 / Tool calling</span><span class="active-status">Smoke passed · full run queued</span></div>
+            <h3>Calls, arguments and abstention</h3>
+            <p>A tool-use continuation mixes 36,642 tool training examples from <a href="https://huggingface.co/datasets/birgermoell/oellm-eu-tooluse-v1">oellm-eu-tooluse-v1</a> with instruction replay at equal rendered-token volume. The five-update LUMI smoke passed after a template fix; validation, full SFT and evaluation remain queued.</p>
+            <p class="active-gate"><strong>Next gate</strong> Measure valid syntax, tool choice, exact arguments and unnecessary calls against the parent. The source data are English, so this is not yet a multilingual tool-use claim.</p>
+          </article>
+        </div>
+        <div class="experiment-panel">
+          <div>
+            <p class="micro-label">The shared research standard</p>
+            <h3>A checkpoint is a result only after its comparison</h3>
+            <p>Across SFT, DPO, RLVR and tool use, the workflow pins the parent and data, runs a small executable gate, saves interpretable checkpoints, and measures both target gains and regressions. Failed launches and negative results belong in the record.</p>
+          </div>
+          <div class="protocol-list">
+            <div><span>01 / Inputs</span><p>Publish revisions, mixture counts, transformation rules and evaluation separation.</p></div>
+            <div><span>02 / Evidence</span><p>Keep raw generations, per-language slices, verifier checks and parent comparisons.</p></div>
+            <div><span>03 / Release</span><p>Label experimental artifacts clearly until independent evaluation and reproduction are possible.</p></div>
+          </div>
+        </div>
+        <div class="research-baseline">
+          <h3>Why these gates matter</h3>
+          <p>The public <a href="https://huggingface.co/openeurollm/oellm-9b-256k-sft">9B SFT model card</a> shows how easy it is to overread a headline: one math source was 18.77% of rows but 64.41% of tokenized data; 4K SFT sequences coexist with a 256K configured context; and a 40/40 retrieval probe coexisted with 0/5 exact-format compliance at 128K. It reported no held-out SFT-source validation split. Each fact changes what a later experiment needs to measure.</p>
+        </div>
+        <p class="research-source">LUMI jobs and run outputs checked 5 October 2026. Public links provide model, dataset and code context; LUMI-only observations remain provisional until their full run artifacts are released. The PDF details the methods and limits.</p>
+      </section>
+
       <section class="band">
         <div class="section-head">
           <p class="eyebrow">What it covers</p>
@@ -222,7 +234,7 @@
           <h2>Download the guide</h2>
           <p>
             The PDF includes the October artifact check, a repository field guide,
-            three worked paths, reproducibility checklist and linked public sources.
+            three worked paths, active LUMI research brief and linked public sources.
           </p>
         </div>
         <a class="button primary" href="docs/fully-open-llm-guide-2026.pdf">Download PDF</a>

@@ -12,55 +12,15 @@ This field guide uses the public OpenEuroLLM artifacts checked on 5 October
 It follows the project's stated commitment to open documentation, code,
 evaluation, intermediate results and community involvement
 [@openeurollm_official_2026; @ai_sweden_openeurollm_2026]. Released evidence,
-proposed experiments and formal deliverables are kept distinct.
+active experiments and formal deliverables are kept distinct.
 
 A model release should be an auditable system, not weights alone. The guide
 covers data lineage, tokenizer design, architecture and scaling decisions,
 distributed training, post-training, multilingual and long-context evaluation,
 safety, and release engineering. For each consequential claim, it asks for the
 relevant artifact: a manifest, configuration, checkpoint, log, raw output or
-independent test. The research brief below demonstrates that standard with a
-released model card and a controlled next experiment.
-
-# Research Brief: A Testable Post-Training Recipe
-
-The public [OpenEuroLLM 9B SFT checkpoint](https://huggingface.co/openeurollm/oellm-9b-256k-sft)
-reports its training mixture, sequence construction and diagnostics. Three
-observations shape the next experiment:
-
-| Observed in the released card | Research consequence |
-|---|---|
-| Nemotron-v2 math: 18.77% of rows, 64.41% of the tokenized pool. | Audit token exposure, not only row shares; exact sampled tokens by source cannot be recovered after cross-example packing. |
-| SFT sequences: at most 4,096 tokens; configured context: 262,144 tokens. | Test behavior at length. Natural-word single-needle retrieval was 40/40, while exact-format compliance was 0/5 at 128K and about 262K. |
-| No held-out validation split from the SFT sources. | Training loss cannot establish generalization; freeze independent evaluations and inspect regressions. |
-
-**Proposed experiment: multilingual verifiable-reward training.** Start from
-one immutable 9B SFT revision. Test whether the public
-[math RLVR dataset](https://huggingface.co/datasets/openeurollm/oellm-math-rlvr)
-can improve math across languages without eroding instruction following. This
-is a study design, not a claim about an existing run.
-
-1. **Freeze inputs.** Pin model, tokenizer, data, verifier and training
-   revisions; record language and token shares. Split by semantic or
-   contamination group and audit verifier decisions by language and difficulty.
-2. **Compare arms.** Hold the starting checkpoint, compute and inference budget
-   fixed. Compare the frozen model, an equal-budget continued-SFT control and
-   RLVR treatment. Use multiple seeds where feasible.
-3. **Measure gains and damage.** Report held-out pass@1 by language and
-   difficulty, verifier errors, invalid answers and reward distribution. Freeze
-   non-math instruction, multilingual, safety and tool-use regressions. Pin
-   [JudgeArena](https://github.com/OpenEuroLLM/JudgeArena) judge and baseline,
-   and [oellm-eval](https://github.com/OpenEuroLLM/oellm-eval) tasks and prompts;
-   retain raw generations.
-4. **Predeclare interpretation.** Reward gain without held-out accuracy is not
-   success. Report regressions, cost and uncertainty, including null results
-   and evidence of verifier exploitation.
-5. **Release the experiment.** Publish manifests, revisions, configs, logs,
-   intermediate checkpoints, raw outputs, per-language results and failures,
-   subject to source terms. The result should be independently replayable.
-
-The value is the controlled comparison and evidence trail, whether or not the
-intervention succeeds.
+independent test. Section 20 closes the field guide with a research brief on
+four active post-training streams and the evidence needed to judge them.
 
 # 1. Scope And Operating Principles
 
@@ -1633,6 +1593,91 @@ contamination group before training. Validate the verifier on a held-out set,
 track reward hacking and invalid outputs, and compare both capability gain and
 regression on non-reasoning tasks. Dataset availability is not proof that a
 specific model was RL-trained on it.
+
+## 20.7 Research Brief: Active Post-Training Work on LUMI
+
+The released [OpenEuroLLM 9B SFT card](https://huggingface.co/openeurollm/oellm-9b-256k-sft)
+provides a useful starting diagnosis. Nemotron-v2 math accounted for 18.77% of
+source rows but 64.41% of the tokenized pool, so token exposure matters more
+than row counts alone. The SFT used sequences up to 4,096 tokens although the
+model is configured for 262,144; its 40/40 single-needle retrieval result and
+0/5 exact-format compliance at 128K show why long-context claims need
+task-specific probes. Its SFT sources had no held-out validation split, so
+training loss alone cannot establish generalization.
+
+Against that backdrop, the following are four **distinct experiments led by
+the author on LUMI**, using public OpenEuroLLM checkpoints, datasets and code.
+Statuses reflect LUMI accounting and run artifacts checked on 5 October 2026.
+They are a time-stamped research record, not formal project deliverables.
+
+### Reasoning SFT: improve reasoning without losing the assistant
+
+The published [reasoning-v1 checkpoint](https://huggingface.co/birgermoell/oellm-9b-256k-reasoning-v1)
+is a completed 2,000-step full-weight SFT continuation. Its model card reports
+gains on ARC-Challenge and flexible-answer multilingual MGSM, but regressions
+on GSM8K, IFEval and MMLU college computer science. It is therefore an
+experimental artifact rather than an accepted upgrade. The current
+[reasoning-training recipe](https://github.com/BirgerMoell/oellm-reasoning-training)
+tests a separate Anneal-300B 9B parent with 524.3 million rendered tokens,
+translated Dolci reasoning, and instruction replay. Its latest submitted
+production attempt failed at chat-template validation **before an optimizer
+update**. The immediate work is to repair and qualify the assistant loss mask,
+then compare reasoning gains with instruction, language and loop regressions.
+
+### DPO: learn preferences from three differently shaped sources
+
+A full-weight 9B DPO run was **training** on four LUMI nodes at this check.
+It starts from the [Anneal-300B instruct SFT model](https://huggingface.co/Neonkraft/oellm-9b-256k-theta64m-prelude-anneal300b-instruct-sft)
+and stages approximately 1.48 million preference pairs from
+[translated Dolci DPO](https://huggingface.co/datasets/openeurollm/Dolci-Instruct-DPO-translated),
+[HelpSteer3](https://huggingface.co/datasets/nvidia/HelpSteer3) and
+[UltraFeedback](https://huggingface.co/datasets/argilla/ultrafeedback-binarized-preferences-cleaned).
+The multilingual Dolci component numerically dominates this natural-size
+mixture; it is not a balanced three-way sample. A step-9,000 intermediate
+checkpoint had been saved, but its training preference accuracy is **not** a
+held-out quality result. The decision gate is paired evaluation against the
+unchanged SFT parent, with per-language preference and general-capability
+regressions. The public [post-training framework](https://github.com/OpenEuroLLM/post-training)
+shows the configuration-driven SFT/DPO stack; exact run code and artifacts
+still need a reproducible release.
+
+### Verifiable-reward RL: test whether math gains transfer
+
+The public [math RLVR dataset](https://huggingface.co/datasets/birgermoell/oellm-math-rlvr)
+and [RLVR run records](https://github.com/BirgerMoell/oellm-rlvr) support a
+sequence of bounded LUMI experiments. The released
+[Phase A checkpoint](https://huggingface.co/birgermoell/oellm-9b-math-rlvr-phase-a-32step-experimental)
+completed 32 additional updates. A corrected 64-update Phase B qualification
+also completed and was evaluated. Its step-64 export scored **45.12%** on a
+frozen 512-prompt multilingual procedural-math holdout, but only **4.00%** on
+a 1,024-prompt harder external-family diagnostic. That mixed result does not
+establish broad reasoning improvement. A 10,000-problem difficulty survey,
+quality gate, 256-update run and paired evaluation were queued at this check;
+no result from that chain is claimed. The next decision depends on verifier
+quality, disjoint semantic groups, reward variation, language slices and
+external-family regressions, not rising training reward alone.
+
+### Tool calling: separate valid calls from unnecessary calls
+
+The tool-use continuation combines the public
+[oellm-eu-tooluse-v1 dataset](https://huggingface.co/datasets/birgermoell/oellm-eu-tooluse-v1)
+with an equal rendered-token budget of instruction replay. Its checked build
+contains 36,642 tool training rows and 31,695 replay rows. A five-update
+LUMI smoke test completed after fixing a Qwen3 chat-template and assistant-mask
+compatibility issue; checkpoint validation, four-node SFT and paired evaluation
+were still queued. The evaluation compares the parent and candidate on valid
+call syntax, function name, exact arguments and abstention when an irrelevant
+tool is available. The source tool data are labeled English; success on this
+test would not by itself establish multilingual tool use. The
+[run record](https://github.com/BirgerMoell/oellm-reasoning-training) documents
+the training path and its gates.
+
+Across all four streams, the release standard is the same: pin the parent and
+tokenizer, publish data lineage and transformations, pass a small executable
+gate, retain intermediate checkpoints, freeze evaluation before looking at
+results, and report failures beside gains. Current LUMI-only observations
+should be treated as provisional until the corresponding configs, model cards,
+raw outputs and independent comparisons are public.
 
 # 21. Trade-Off Summary
 
