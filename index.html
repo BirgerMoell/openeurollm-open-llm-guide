@@ -6,18 +6,18 @@
     <title>The 2026 Fully Open LLM Training Guide</title>
     <meta
       name="description"
-      content="A public technical guide to training fully open, multilingual foundation models in 2026."
+      content="Birger Moëll's source-grounded field guide to open multilingual model training, controlled post-training experiments, evaluation and reproducible release."
     />
     <meta name="theme-color" content="#f75cac" />
     <link rel="canonical" href="https://birgermoell.github.io/openeurollm-open-llm-guide/" />
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/social-card.png" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="OpenEuroLLM Guide" />
+    <meta property="og:site_name" content="Fully Open LLM Guide" />
     <meta property="og:title" content="The 2026 Fully Open LLM Training Guide" />
     <meta
       property="og:description"
-      content="Citation-grounded systems guidance for training, evaluating, post-training, and releasing open multilingual foundation models."
+      content="A source-grounded field guide with a concrete post-training research brief, public artifact map and reproducible release standard."
     />
     <meta property="og:url" content="https://birgermoell.github.io/openeurollm-open-llm-guide/" />
     <meta property="og:image" content="https://birgermoell.github.io/openeurollm-open-llm-guide/assets/social-card.png" />
@@ -30,7 +30,7 @@
     <meta name="twitter:title" content="The 2026 Fully Open LLM Training Guide" />
     <meta
       name="twitter:description"
-      content="Citation-grounded systems guidance for training open multilingual foundation models."
+      content="A source-grounded guide to open multilingual models, controlled post-training experiments and reproducible releases."
     />
     <meta name="twitter:image" content="https://birgermoell.github.io/openeurollm-open-llm-guide/assets/social-card.png" />
     <link rel="stylesheet" href="styles.css" />
@@ -39,11 +39,12 @@
   <body>
     <header class="hero">
       <nav class="nav" aria-label="Primary">
-        <a class="brand" href="./">OpenEuroLLM Guide</a>
+        <a class="brand" href="./">Fully Open LLM Guide</a>
         <div class="nav-links">
+          <a href="#research">Research brief</a>
+          <a href="#explore">Artifact map</a>
           <a href="docs/fully-open-llm-guide-2026.pdf">PDF</a>
           <a href="docs/paper.md">Markdown</a>
-          <a href="#explore">Explore tools</a>
           <a href="#current">2026 update</a>
           <a href="docs/references.bib">Citations</a>
         </div>
@@ -51,13 +52,14 @@
 
       <section class="hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">OpenEuroLLM · Updated 5 October 2026</p>
+          <p class="eyebrow">Independent field guide · Updated 5 October 2026</p>
           <div class="title-rule"></div>
           <h1>The 2026 Fully Open LLM Training Guide</h1>
           <p class="lead">
-            A practical, source-grounded blueprint for training, evaluating and
-            releasing open multilingual foundation models.
+            Build the model. Show the evidence. A practical guide to open
+            multilingual training, controlled post-training and reproducible release.
           </p>
+          <p class="hero-author">By <a href="https://github.com/BirgerMoell">Birger Moëll</a> · Based on public OpenEuroLLM artifacts</p>
           <div class="chips" aria-label="Guide topics">
             <span>Data lineage</span>
             <span>MoE + scaling</span>
@@ -65,8 +67,8 @@
             <span>Open release</span>
           </div>
           <div class="actions">
-            <a class="button primary" href="docs/fully-open-llm-guide-2026.pdf">Open the PDF</a>
-            <a class="button secondary" href="docs/paper.md">Read the source</a>
+            <a class="button primary" href="#research">Start with the research brief</a>
+            <a class="button secondary" href="docs/fully-open-llm-guide-2026.pdf">Read the PDF</a>
           </div>
         </div>
         <figure class="hero-visual">
@@ -76,6 +78,45 @@
     </header>
 
     <main>
+      <section class="research band" id="research" aria-labelledby="research-title">
+        <div class="section-head research-head">
+          <p class="eyebrow">Research brief · a released checkpoint</p>
+          <h2 id="research-title">From a model card to a better experiment</h2>
+          <p>The public <a href="https://huggingface.co/openeurollm/oellm-9b-256k-sft">OpenEuroLLM 9B SFT card</a> reports enough detail to test its claims and design the next study. Three details matter more than a headline score.</p>
+        </div>
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <p class="evidence-label">The effective mixture</p>
+            <p class="evidence-value">18.77% <span>of rows</span><br/>64.41% <span>of tokens</span></p>
+            <p>The Nemotron math slice dominated the tokenized pool despite being less than a fifth of source conversations. Report token exposure alongside row shares.</p>
+          </article>
+          <article class="evidence-card">
+            <p class="evidence-label">Training vs configuration</p>
+            <p class="evidence-value">4K <span>SFT sequence</span><br/>256K <span>context setting</span></p>
+            <p>Short-sequence SFT and an architectural context limit answer different questions. Test useful behavior at each length.</p>
+          </article>
+          <article class="evidence-card">
+            <p class="evidence-label">What the probe showed</p>
+            <p class="evidence-value">40/40 <span>retrieval</span><br/>0/5 <span>exact format at 128K</span></p>
+            <p>Natural-word single-needle retrieval held across tested lengths. Exact-format compliance fell at long lengths; this does not establish synthesis or reasoning quality.</p>
+          </article>
+        </div>
+        <div class="experiment-panel">
+          <div>
+            <p class="micro-label">Proposed controlled study</p>
+            <h3>Can multilingual RLVR improve math without eroding general behavior?</h3>
+            <p>Start from one immutable 9B SFT revision. Curate a <a href="https://huggingface.co/datasets/openeurollm/oellm-math-rlvr">math RLVR</a> slice with group-separated holdouts and audited verifiers. Compare the frozen checkpoint, an equal-budget continued-SFT control and the RLVR treatment.</p>
+            <p class="experiment-note">This is a proposed experiment, not a claim that this training run has happened.</p>
+          </div>
+          <div class="protocol-list">
+            <div><span>01 / Freeze</span><p>Pin model, tokenizer, dataset, verifier, reward, budget and evaluation revisions.</p></div>
+            <div><span>02 / Measure</span><p>Report held-out pass@1 by language, verifier errors, invalid outputs, instruction and safety regressions.</p></div>
+            <div><span>03 / Release</span><p>Share configs, data manifests, logs, intermediate checkpoints, raw generations and failures.</p></div>
+          </div>
+        </div>
+        <p class="research-source">Source: <a href="https://huggingface.co/openeurollm/oellm-9b-256k-sft">9B SFT model card</a>. Its run used no held-out validation split from the SFT sources; training loss alone cannot establish generalization. The full protocol and limits are in the PDF.</p>
+      </section>
+
       <section class="current band" id="current" aria-labelledby="current-title">
         <div class="section-head">
           <p class="eyebrow">Public artifact check · 5 October 2026</p>
@@ -189,8 +230,8 @@
     </main>
 
     <footer>
-      <span>Built for open, multilingual LLM practice.</span>
-      <a href="https://openeurollm.eu">openeurollm.eu</a>
+      <span>Birger Moëll · Independent technical field guide based on public sources.</span>
+      <a href="https://github.com/BirgerMoell/openeurollm-open-llm-guide">Source repository ↗</a>
     </footer>
   </body>
 </html>

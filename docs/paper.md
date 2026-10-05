@@ -1,33 +1,66 @@
 ---
 title: "The 2026 Fully Open LLM Training Guide: A Technical Blueprint for OpenEuroLLM-Scale Foundation Models"
-author: "Codex synthesis for AI Sweden / OpenEuroLLM planning"
+author: "Birger Moëll"
 date: "2026-10-05"
 bibliography: "references.bib"
 ---
 
-# Abstract
+# Executive Summary
 
-This document is a practical, academic-style guide to training a fully open
-large language model in 2026. It is grounded in the OpenEuroLLM public mission:
-transparent, compliant, open-source multilingual foundation models for Europe
-and beyond, with open documentation, training and testing code, evaluation
-metrics, intermediate results, and community involvement
-[@openeurollm_official_2026; @ai_sweden_openeurollm_2026]. It also incorporates
-the public OpenEuroLLM artifact state checked on 5 October 2026. Internal
-project discussion was used to identify practical risks, while the project
-facts below are supported by public repositories and model cards.
+This field guide uses the public OpenEuroLLM artifacts checked on 5 October
+2026 as examples for building and evaluating a fully open multilingual model.
+It follows the project's stated commitment to open documentation, code,
+evaluation, intermediate results and community involvement
+[@openeurollm_official_2026; @ai_sweden_openeurollm_2026]. Released evidence,
+proposed experiments and formal deliverables are kept distinct.
 
-The guide covers the full lifecycle: project governance, data acquisition,
-curation, multilingual mixture design, tokenizer training, architecture
-selection, scaling-law experiments, HPC infrastructure, pretraining,
-mid-training, post-training, reasoning training, GRPO/RLHF/DPO/RLVR, agent
-capability training, long-context extension, evaluation, safety, release,
-maintenance, and reproducibility. It is opinionated: in 2026, a "fully open"
-model should not mean only downloadable weights. It should mean a scientifically
-auditable system: weights, data recipes, data manifests, tokenizer, code,
-configs, intermediate checkpoints, training logs, evaluation harnesses, safety
-reports, licenses, and enough procedural detail for independent groups to
-challenge, reproduce, improve, or reject the results.
+A model release should be an auditable system, not weights alone. The guide
+covers data lineage, tokenizer design, architecture and scaling decisions,
+distributed training, post-training, multilingual and long-context evaluation,
+safety, and release engineering. For each consequential claim, it asks for the
+relevant artifact: a manifest, configuration, checkpoint, log, raw output or
+independent test. The research brief below demonstrates that standard with a
+released model card and a controlled next experiment.
+
+# Research Brief: A Testable Post-Training Recipe
+
+The public [OpenEuroLLM 9B SFT checkpoint](https://huggingface.co/openeurollm/oellm-9b-256k-sft)
+reports its training mixture, sequence construction and diagnostics. Three
+observations shape the next experiment:
+
+| Observed in the released card | Research consequence |
+|---|---|
+| Nemotron-v2 math: 18.77% of rows, 64.41% of the tokenized pool. | Audit token exposure, not only row shares; exact sampled tokens by source cannot be recovered after cross-example packing. |
+| SFT sequences: at most 4,096 tokens; configured context: 262,144 tokens. | Test behavior at length. Natural-word single-needle retrieval was 40/40, while exact-format compliance was 0/5 at 128K and about 262K. |
+| No held-out validation split from the SFT sources. | Training loss cannot establish generalization; freeze independent evaluations and inspect regressions. |
+
+**Proposed experiment: multilingual verifiable-reward training.** Start from
+one immutable 9B SFT revision. Test whether the public
+[math RLVR dataset](https://huggingface.co/datasets/openeurollm/oellm-math-rlvr)
+can improve math across languages without eroding instruction following. This
+is a study design, not a claim about an existing run.
+
+1. **Freeze inputs.** Pin model, tokenizer, data, verifier and training
+   revisions; record language and token shares. Split by semantic or
+   contamination group and audit verifier decisions by language and difficulty.
+2. **Compare arms.** Hold the starting checkpoint, compute and inference budget
+   fixed. Compare the frozen model, an equal-budget continued-SFT control and
+   RLVR treatment. Use multiple seeds where feasible.
+3. **Measure gains and damage.** Report held-out pass@1 by language and
+   difficulty, verifier errors, invalid answers and reward distribution. Freeze
+   non-math instruction, multilingual, safety and tool-use regressions. Pin
+   [JudgeArena](https://github.com/OpenEuroLLM/JudgeArena) judge and baseline,
+   and [oellm-eval](https://github.com/OpenEuroLLM/oellm-eval) tasks and prompts;
+   retain raw generations.
+4. **Predeclare interpretation.** Reward gain without held-out accuracy is not
+   success. Report regressions, cost and uncertainty, including null results
+   and evidence of verifier exploitation.
+5. **Release the experiment.** Publish manifests, revisions, configs, logs,
+   intermediate checkpoints, raw outputs, per-language results and failures,
+   subject to source terms. The result should be independently replayable.
+
+The value is the controlled comparison and evidence trail, whether or not the
+intervention succeeds.
 
 # 1. Scope And Operating Principles
 
