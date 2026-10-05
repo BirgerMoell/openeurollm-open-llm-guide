@@ -34,6 +34,7 @@
     />
     <meta name="twitter:image" content="https://birgermoell.github.io/openeurollm-open-llm-guide/assets/social-card.png" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="ecosystem.js" defer></script>
   </head>
   <body>
     <header class="hero">
@@ -42,18 +43,20 @@
         <div class="nav-links">
           <a href="docs/fully-open-llm-guide-2026.pdf">PDF</a>
           <a href="docs/paper.md">Markdown</a>
+          <a href="#explore">Explore tools</a>
+          <a href="#current">2026 update</a>
           <a href="docs/references.bib">Citations</a>
         </div>
       </nav>
 
       <section class="hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">OpenEuroLLM · Technical Blueprint · 2026</p>
+          <p class="eyebrow">OpenEuroLLM · Updated 5 October 2026</p>
           <div class="title-rule"></div>
           <h1>The 2026 Fully Open LLM Training Guide</h1>
           <p class="lead">
-            A citation-grounded blueprint for training and releasing open
-            multilingual foundation models.
+            A practical, source-grounded blueprint for training, evaluating and
+            releasing open multilingual foundation models.
           </p>
           <div class="chips" aria-label="Guide topics">
             <span>Data lineage</span>
@@ -67,12 +70,74 @@
           </div>
         </div>
         <figure class="hero-visual">
-          <img src="assets/project-state.png" alt="OpenEuroLLM current project state infographic" />
+          <img src="assets/open-factory.svg" alt="Stages of an auditable open LLM training and release pipeline" />
         </figure>
       </section>
     </header>
 
     <main>
+      <section class="current band" id="current" aria-labelledby="current-title">
+        <div class="section-head">
+          <p class="eyebrow">Public artifact check · 5 October 2026</p>
+          <h2 id="current-title">What has changed since the first edition</h2>
+          <p>The guide now tracks published OpenEuroLLM experiments and tooling while keeping formal project deliverables distinct.</p>
+        </div>
+        <div class="updates">
+          <article><span>01 / Data</span><h3>Trace the exact mixture</h3><p>The public <a href="https://github.com/OpenEuroLLM/training-data-collection">Training Data Collection</a> records cycle-specific metadata, sampling and packing alongside the <a href="https://github.com/OpenEuroLLM/training-data-catalogue">Catalogue</a>.</p></article>
+          <article><span>02 / Tokenizer</span><h3>Pin the revision</h3><p>The <a href="https://huggingface.co/openeurollm/tokenizer-256k-v2">256k v2 tokenizer</a> documents multilingual, code, math and special-token tests. V1 and v2 are separate model inputs.</p></article>
+          <article><span>03 / Models</span><h3>Read the model card</h3><p><a href="https://huggingface.co/openeurollm/prelude">Prelude</a> and a <a href="https://huggingface.co/openeurollm/oellm-9b-256k-sft">9B SFT experiment</a> are public. The <a href="https://huggingface.co/openeurollm/oellm-32b">32B repository</a> has no model card yet.</p></article>
+          <article><span>04 / Evaluation</span><h3>Compare like with like</h3><p>Use <a href="https://github.com/OpenEuroLLM/oellm-eval">oellm-eval</a> with pinned prompts, shot counts, metrics and revisions. A configured context length is not a verified capability.</p></article>
+        </div>
+        <p class="status-note">Formal dataset and first-model milestones remain listed on the <a href="https://openeurollm.eu/deliverables">official deliverables page</a>.</p>
+      </section>
+
+      <section class="ecosystem band" id="explore" aria-labelledby="explore-title">
+        <div class="section-head">
+          <p class="eyebrow">Interactive field guide</p>
+          <h2 id="explore-title">Explore the OpenEuroLLM ecosystem</h2>
+          <p>Follow a workflow, search for a tool, or filter by stage. Each entry explains what the resource does, what it produces, and what to verify before using it.</p>
+        </div>
+
+        <div class="workflow-panel">
+          <div class="workflow-intro">
+            <p class="micro-label">Choose a path</p>
+            <h3>How the pieces connect</h3>
+            <p>These are illustrative paths through public resources. They do not claim that a particular dataset was used for a particular checkpoint.</p>
+          </div>
+          <div class="workflow-tabs" role="tablist" aria-label="Example workflows">
+            <button type="button" role="tab" id="workflow-tab-base" aria-controls="workflow-steps" aria-selected="true" data-workflow="base">Corpus to base model</button>
+            <button type="button" role="tab" id="workflow-tab-assistant" aria-controls="workflow-steps" aria-selected="false" data-workflow="assistant">Base to assistant</button>
+            <button type="button" role="tab" id="workflow-tab-evaluation" aria-controls="workflow-steps" aria-selected="false" data-workflow="evaluation">Compare models</button>
+          </div>
+          <div class="workflow-steps" id="workflow-steps" role="tabpanel" aria-labelledby="workflow-tab-base"></div>
+        </div>
+
+        <div class="explorer-head">
+          <div>
+            <p class="micro-label">Repository &amp; artifact directory</p>
+            <h3>Find the right starting point</h3>
+          </div>
+          <label class="search-label" for="artifact-search">Search resources
+            <input id="artifact-search" type="search" placeholder="Try JudgeArena, tokenizer, RLVR…" autocomplete="off" />
+          </label>
+        </div>
+        <div class="filter-list" role="group" aria-label="Filter resources by stage">
+          <button type="button" class="active" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" data-filter="data" aria-pressed="false">Data</button>
+          <button type="button" data-filter="training" aria-pressed="false">Training</button>
+          <button type="button" data-filter="post-training" aria-pressed="false">Post-training</button>
+          <button type="button" data-filter="evaluation" aria-pressed="false">Evaluation</button>
+          <button type="button" data-filter="models" aria-pressed="false">Models</button>
+        </div>
+        <p class="result-count" id="result-count" aria-live="polite"></p>
+        <div class="explorer-layout">
+          <div class="artifact-grid" id="artifact-grid"></div>
+          <aside class="artifact-detail" id="artifact-detail" aria-live="polite" aria-label="Selected resource details"></aside>
+        </div>
+        <noscript><p class="status-note">The interactive directory needs JavaScript. The <a href="docs/paper.md">Markdown guide</a> includes the same repository field guide and worked examples.</p></noscript>
+        <p class="status-note">Checked against public repository READMEs and Hugging Face cards on 5 October 2026. Dataset inclusion in this directory does not establish use in a released model.</p>
+      </section>
+
       <section class="band">
         <div class="section-head">
           <p class="eyebrow">What it covers</p>
@@ -112,11 +177,11 @@
 
       <section class="download">
         <div>
-          <p class="eyebrow">Richer project edition</p>
+          <p class="eyebrow">Updated technical edition</p>
           <h2>Download the guide</h2>
           <p>
-            The live PDF uses the richer OpenEuroLLM working-context edition,
-            including the project-state infographics and linked citations.
+            The PDF includes the October artifact check, a repository field guide,
+            three worked paths, reproducibility checklist and linked public sources.
           </p>
         </div>
         <a class="button primary" href="docs/fully-open-llm-guide-2026.pdf">Download PDF</a>

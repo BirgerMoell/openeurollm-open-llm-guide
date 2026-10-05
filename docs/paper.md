@@ -1,7 +1,7 @@
 ---
 title: "The 2026 Fully Open LLM Training Guide: A Technical Blueprint for OpenEuroLLM-Scale Foundation Models"
 author: "Codex synthesis for AI Sweden / OpenEuroLLM planning"
-date: "2026-05-07"
+date: "2026-10-05"
 bibliography: "references.bib"
 ---
 
@@ -13,10 +13,9 @@ transparent, compliant, open-source multilingual foundation models for Europe
 and beyond, with open documentation, training and testing code, evaluation
 metrics, intermediate results, and community involvement
 [@openeurollm_official_2026; @ai_sweden_openeurollm_2026]. It also incorporates
-local OpenEuroLLM knowledge-base status as of late April 2026, including active
-work on HPLT 4.0 processing, dataset composition, HPC setup standardization,
-model-card reuse, multilingual evaluation integration, long-context/refinement
-planning, and compute-access applications [@open_eurollm_kb_2026].
+the public OpenEuroLLM artifact state checked on 5 October 2026. Internal
+project discussion was used to identify practical risks, while the project
+facts below are supported by public repositories and model cards.
 
 The guide covers the full lifecycle: project governance, data acquisition,
 curation, multilingual mixture design, tokenizer training, architecture
@@ -88,37 +87,28 @@ being evaluated mostly in English. It can be safe in English but brittle in
 lower-resource languages. It can score well on static benchmarks while failing
 as a tool-using agent. The engineering task is therefore a systems problem.
 
-## 1.3 OpenEuroLLM Current Working Context
+## 1.3 OpenEuroLLM Artifact State, 5 October 2026
 
-The local OpenEuroLLM KB snapshot suggests the following current working
-picture [@open_eurollm_kb_2026]:
+The public record now contains several distinct artifact classes. Do not infer
+that every organization upload is a final project release. The official
+[deliverables page](https://openeurollm.eu/deliverables) still lists the
+initial dataset and first-model deliverables for December 2026.
 
-- WP3 training data work is active. Full English HPLT 4.0 processing was delayed
-  by OOM issues in some batches, while larger AB samples were available and jobs
-  were being rerun toward a complete release preview.
-- T4.3 dataset composition and processing is revising priorities as data
-  availability changes. Annotation capacity is being assessed, and BSC-edu or
-  FineWeb-edu-style filtering is under consideration.
-- WP4 model building is standardizing training setup across LUMI, Leonardo, MN5,
-  and eventually all four systems. Leonardo Qwen3-like configs exist, but were
-  described as not the most up to date; MN5 configs and LUMI scripts require
-  careful adaptation.
-- Model card work is using existing Hugging Face cards as templates, with
-  required changes to datasets, language metadata, training data, and logs.
-- T4.2 model exploration/scaling-law work is focusing on what is integrated into
-  `oellm-cli`, with multilingual evaluation task selection still needing
-  clarity.
-- MultiSynt/evaluation work has early tasks such as `belebele_cf` and
-  `arc_challenge_mt`, with more integration planned.
-- T4.6 long-context/refinement discussion is active. Efficient inter-document
-  masking, FlashAttention support, TRL/Open-Instruct support, and post-training
-  compute constraints matter.
-- Compute applications are under active review. One draft discussed an ambitious
-  8M GPU-hour request, possible allocation reduction risk, pretraining and
-  post-training balance, and a 9B/10TT pretraining estimate at 300 TFLOPS.
+| Public artifact | What it establishes | What it does not establish |
+|---|---|---|
+| [Training Data Catalogue](https://github.com/OpenEuroLLM/training-data-catalogue) and [Training Data Collection](https://github.com/OpenEuroLLM/training-data-collection) | Discoverable sources, cycle-specific `metadata.yaml`, counts, sampling and packing recipes | That every source can be redistributed under one license |
+| [Tokenizer v2, 256k](https://huggingface.co/openeurollm/tokenizer-256k-v2) and [128k](https://huggingface.co/openeurollm/tokenizer-128k-v2) | Released SentencePiece tokenizer variants with multilingual and special-token tests | Interchangeability with v1 checkpoints; the exact tokenizer revision remains part of model identity |
+| [Prelude](https://huggingface.co/openeurollm/prelude), [9B SFT experiment](https://huggingface.co/openeurollm/oellm-9b-256k-sft), and [32B repository](https://huggingface.co/openeurollm/oellm-32b) | Public model artifacts and experiment reports | A completed, uniformly documented final model family; the 32B repository currently has no model card |
+| [OpenEuroLLM datasets](https://huggingface.co/openeurollm/datasets) | Published translated instruction, reasoning, tool-use, RLVR, and evaluation resources | Automatic evidence that each dataset was used in a given checkpoint |
+| [oellm-eval](https://github.com/OpenEuroLLM/oellm-eval) and [post-training](https://github.com/OpenEuroLLM/post-training) | Public evaluation and configuration-driven SFT/DPO tooling | Comparable results without pinned task, prompt, shot count, metric and code revision |
 
-This snapshot should be treated as internal working-state context, not as a
-final public OpenEuroLLM claim.
+Use a dated artifact inventory for release claims. Record the exact repository
+revision, model commit, tokenizer revision, data recipe, and evaluation
+configuration. A nominal context limit is configuration metadata until a
+specific retrieval or reasoning test demonstrates useful behavior at that
+length. The [9B SFT model card](https://huggingface.co/openeurollm/oellm-9b-256k-sft)
+shows this distinction clearly: it reports 4K-sequence SFT and separate
+long-context retrieval probes, with their limitations.
 
 # 2. End-To-End Lifecycle
 
@@ -385,21 +375,22 @@ approximate text length.
 
 ## 5.3 OpenEuroLLM Data Workstream
 
-For an OpenEuroLLM-style project, the data stage should produce:
+The public [Training Data Collection](https://github.com/OpenEuroLLM/training-data-collection)
+separates a searchable source catalogue from the exact, cycle-specific
+collection used to train a model. Its `metadata.yaml` files and tokenizer-based
+source counts are the natural anchors for a reproducible mixture. For each
+cycle, publish the source revision, subset rule, quality and privacy flags,
+language/domain counts, tokenizer revision, packed-token counts, random seed,
+and final manifest. Where raw source redistribution is restricted, publish the
+complete acquisition and transformation recipe within those terms.
 
-- HPLT 4.0 processing status by language and batch.
-- AB sample availability and quality summary.
-- OOM failure report and rerun plan.
-- German/Spanish release-preview status and annotation integration plan.
-- BSC-edu/FineWeb-edu/OpenEuroLLM-native annotator comparison.
-- Annotation capacity table by language, domain, and time.
-- Locked validation split for scaling-law experiments.
-- Data-card draft for every mixture version.
-
-The local KB suggests that full English HPLT 4.0 processing was delayed by OOM
-issues while larger AB samples were available; this should be treated as a
-visible risk register item rather than a hidden data-engineering detail
-[@open_eurollm_kb_2026].
+Treat sampling as a measured intervention. Report both document shares and
+token shares: long examples can dominate tokens even when they are a minority
+of rows. The [9B SFT card](https://huggingface.co/openeurollm/oellm-9b-256k-sft)
+provides a concrete example: its Nemotron math slice was 18.77% of loaded rows
+but 64.41% of the tokenized pool. Record prefix selection, packing, and
+post-concatenation deduplication explicitly; these details change the effective
+training distribution.
 
 # 6. Tokenizer Design
 
@@ -450,6 +441,14 @@ Fallback rate: 0.03%
 
 The tokenizer should be evaluated before pretraining. Retrofitting a tokenizer
 after large-scale training is extremely expensive.
+
+OpenEuroLLM's [256k v2 card](https://huggingface.co/openeurollm/tokenizer-256k-v2)
+documents a retrain that restored Georgian coverage, adds chat and reasoning
+special tokens, and reports held-out results across prose, code, math, chat and
+PDF text. Its published comparison also shows a code trade-off. This is the
+right reporting pattern: publish per-language deltas and domain weaknesses,
+then verify that the chosen tokenizer and special-token IDs match every model,
+packed dataset and chat template in the run.
 
 # 7. Architecture Strategy For 2026
 
@@ -673,17 +672,19 @@ Do not use a single validation loss. Use a dashboard:
 - Instruction-like text.
 - Long documents.
 
-The local KB indicates T4.2 work is focusing on `oellm-cli` integration and
-validation-split work. That is correct: scaling-law results are only useful if
-validation is locked, representative, and reproducible [@open_eurollm_kb_2026].
+Scaling-law results are useful only if validation is locked, representative,
+and reproducible. Publish the validation manifest and the exact
+[oellm-eval](https://github.com/OpenEuroLLM/oellm-eval) task configuration.
 
 # 9. Infrastructure And Distributed Training
 
 ## 9.1 HPC Target Reality
 
-OpenEuroLLM-like training happens across heterogeneous EuroHPC systems. The
-local KB mentions LUMI, Leonardo, MN5, and eventually standardization across
-four systems [@open_eurollm_kb_2026]. Hardware differences matter:
+OpenEuroLLM-like training happens across heterogeneous EuroHPC systems.
+Public [training-data catalogue](https://github.com/OpenEuroLLM/training-data-catalogue)
+documentation and [post-training tooling](https://github.com/OpenEuroLLM/post-training)
+describe workflows spanning LUMI, Leonardo and MareNostrum 5. Hardware
+differences matter:
 
 - GPU memory: 64GB vs 80GB vs 96GB changes feasible model parallelism.
 - Interconnect: affects tensor, pipeline, expert, and data parallelism.
@@ -772,7 +773,7 @@ The base objective remains autoregressive next-token prediction:
 Use packed sequences to reduce padding waste. But packing creates document
 boundary issues. For long-context training, efficient inter-document masking may
 matter because compute depends on actual document length statistics, not merely
-maximum context length [@open_eurollm_kb_2026]. If documents are packed without
+maximum context length. If documents are packed without
 masking, the model may learn cross-document artifacts. If masking is naive, it
 may waste attention compute. If masking is efficient and framework-supported,
 it can improve both quality and cost.
@@ -915,10 +916,10 @@ boundaries:
 A_{ij}=1 \quad \text{iff} \quad j \le i \text{ and } doc(i)=doc(j).
 \]
 
-Efficient implementation is non-trivial. The local KB notes that if efficient
-inter-document masking is supported, compute can depend on document length
-statistics such as mean \(\mu\) and variance \(\sigma^2\), not only maximum
-context [@open_eurollm_kb_2026]. This should be tested in the actual framework.
+Efficient implementation is non-trivial. If efficient inter-document masking
+is supported, compute can depend on document length statistics such as mean
+\(\mu\) and variance \(\sigma^2\), not only maximum context. Benchmark this
+with the actual attention kernel, packing distribution, and hardware.
 
 # 12. Post-Training Overview
 
@@ -1374,10 +1375,10 @@ Evaluate:
 
 ## 18.2 Multilingual Evaluation
 
-The local wiki notes a OneRuler-OELLM fork for 38 tokenizer languages, with
-synthetic fallback resources that need native-speaker validation before
-publishable claims. This is the right discipline. Make evaluation status
-explicit:
+The public [oellm-eval](https://github.com/OpenEuroLLM/oellm-eval) workflow
+supports reproducible task groups across clusters. Multilingual benchmarks
+still need language-specific review before broad claims. Make evaluation
+status explicit:
 
 - Native validated.
 - Professional translation.
@@ -1394,6 +1395,13 @@ Report parse failure rate:
 
 This matters because models often "know" the answer but fail the format, or
 produce unparseable multilingual output.
+
+For every reported score, pin the checkpoint and tokenizer revisions, task
+dataset revision, prompt, shot count, answer normalization, metric, decoding
+configuration and harness commit. Small changes to these settings can change
+rankings. Keep a stable headline panel and a clearly labeled experimental
+panel; publish raw predictions so language-specific parse and length bias can
+be diagnosed.
 
 ## 18.3 Long-Context Evaluation
 
@@ -1461,20 +1469,20 @@ Each release should have a reproducible build path.
 
 ## 19.2 Artifact Manifest
 
-Example:
+Illustrative schema (not a real OpenEuroLLM checkpoint):
 
 ```yaml
-model_name: openeurollm-9b-base-v1
+model_name: example-base-v1
 architecture: dense_decoder_transformer
-tokenizer: openeurollm-tokenizer-v1
-training_tokens: 10_000_000_000_000
+tokenizer: tokenizer-revision-and-commit
+training_tokens: measured_total
 context_length: 8192
-long_context_variant: yarn-32768
-data_recipe: mixture-v4.2
-code_commit: abc123
-checkpoint: step_1000000
-license: apache-2.0-compatible-weights
-eval_report: evals/openeurollm-9b-base-v1.json
+long_context_variant: measured-variant-or-none
+data_recipe: immutable-mixture-manifest
+code_commit: full-git-sha
+checkpoint: exact-step-and-hash
+license: verified-weight-license
+eval_report: evals/pinned-run.json
 model_card: README.md
 ```
 
@@ -1491,43 +1499,107 @@ This supports mechanistic interpretability, data studies, and reproducibility.
 
 # 20. OpenEuroLLM-Specific Technical Roadmap
 
-## 20.1 Immediate
+This is a **release-readiness sequence**, not a claim that these tasks are
+complete or an internal schedule. The project's [official deliverables](https://openeurollm.eu/deliverables)
+remain the authority for formal dates.
 
-- Stabilize HPLT 4.0 processing and document OOM rerun plan.
-- Publish internal data status dashboard by language and batch.
-- Lock validation split for scaling laws.
-- Standardize training configs across LUMI, Leonardo, MN5, and the fourth
-  system.
-- Convert ad hoc Slurm scripts into `oellm-autoexp` recipes where possible.
-- Define minimum multilingual evaluation matrix in `oellm-cli`.
-- Create model-card template with required metadata.
+## 20.1 Freeze the Evidence Chain
 
-## 20.2 Near-Term
+- Pin source and collection revisions in the public [Training Data Collection](https://github.com/OpenEuroLLM/training-data-collection), including `metadata.yaml`, counts, selection rules and packing configuration.
+- Pin the tokenizer revision in every data and model manifest. Compare v1 and [v2](https://huggingface.co/openeurollm/tokenizer-256k-v2) using the same multilingual, code, math and chat test sets; verify special-token round trips and document boundaries.
+- Publish a model lineage graph linking base, annealed, context-extended and post-trained checkpoints. Mark experimental and formal-release status separately.
 
-- Run dense small-model ablations for data mixture.
-- Compare BSC-edu, FineWeb-edu-style, and OpenEuroLLM-native annotators.
-- Validate tokenizer fertility across target languages.
-- Train 0.4B-2B reference models for mixture and infrastructure tests.
-- Create long-context screening harness.
-- Build post-training data registry.
+## 20.2 Make Comparisons Reproducible
 
-## 20.3 Medium-Term
+- Lock multilingual evaluation suites, prompt templates, few-shot counts, normalization, decoding settings and metric versions in [oellm-eval](https://github.com/OpenEuroLLM/oellm-eval). Keep raw predictions for error analysis.
+- Evaluate long context at multiple lengths, depths and languages. Report exact retrieval separately from answer format, multi-document synthesis and short-context regression.
+- Publish per-language and per-domain data-ablation results before changing the production mix; compare token shares as well as row shares.
 
-- Train 7B-9B dense base model.
-- Train instruction and reasoning variants.
-- Run GRPO/RLVR experiments on math/code/verifiable multilingual tasks.
-- Build tool-use and agent SFT data.
-- Evaluate MoE candidate with expert-load diagnostics by language.
-- Prepare compute-access fallback plans for partial allocation.
+## 20.3 Turn Post-Training Runs into Releases
 
-## 20.4 Long-Term
+- Use versioned YAML in the public [post-training framework](https://github.com/OpenEuroLLM/post-training) for SFT and preference runs, with code revision, data revisions, packing, loss mask, optimizer, seed, hardware and checkpoint lineage.
+- Use the released [translated SFT](https://huggingface.co/datasets/openeurollm/Dolci-Instruct-SFT-translated), [reasoning](https://huggingface.co/datasets/openeurollm/reasoning-traces-multilingual), [tool-use](https://huggingface.co/datasets/openeurollm/oellm-eu-tooluse-v1), [math RLVR](https://huggingface.co/datasets/openeurollm/oellm-math-rlvr) and [code RLVR](https://huggingface.co/datasets/openeurollm/oellm-code-rlvr) resources as candidates with explicit licensing, contamination and fit checks. Dataset publication alone does not prove inclusion in a checkpoint.
+- Run a small end-to-end rehearsal of each stage before large runs, then compare capability gains and regressions on the same frozen evaluation suite.
 
-- Train frontier dense or MoE model.
-- Release fully open artifacts.
-- Maintain evaluation leaderboard and issue tracker.
-- Support community fine-tuning.
-- Maintain removal and correction processes.
-- Publish technical report with training logs, ablations, and limitations.
+## 20.4 Publish with Clear Limits
+
+- Complete model and dataset cards before announcing a checkpoint as a release. Explain missing cards or incomplete lineage in experimental repositories.
+- Release weights, tokenizer, code, manifests, run logs, evaluation configurations and raw results where terms permit. State any unavailable inputs and provide executable reconstruction steps.
+- Maintain a correction process for dataset issues, benchmark contamination and model-card errors. Date every status claim in this living guide.
+
+## 20.5 Repository Field Guide
+
+OpenEuroLLM is a collection of connected tools, not one monolithic training
+repository. Start with the question you are trying to answer. The table below
+describes publicly documented roles as of 5 October 2026; it is a navigation
+guide, not a claim that every tool was used for every model.
+
+**Data and pretraining.**
+
+| Question | Public resource | What it does | Inspect first |
+|---|---|---|---|
+| Which source corpora are available? | [training-data-catalogue](https://github.com/OpenEuroLLM/training-data-catalogue) | Curates candidate pretraining datasets, versions, language references, corpus statistics and licensing notes. Inclusion does not certify legal suitability. | Source entry, version, terms and language/script coverage. |
+| Which data went into one training cycle? | [training-data-collection](https://github.com/OpenEuroLLM/training-data-collection) | Organizes cycle-specific source subsets, `metadata.yaml`, counts, sampling and release recipes. | Cycle directory, tokenizer property, source counts and subset rules. |
+| How were selected records packaged? | [training-data-packer](https://github.com/OpenEuroLLM/training-data-packer) | Reads collection metadata; applies sampling, decontamination and PII masking; merges files and summarizes metrics. | `metadata.yaml`, lint result, release manifest and transformation logs. |
+| How are pretraining experiments launched? | [oellm-autoexp](https://github.com/OpenEuroLLM/oellm-autoexp) | Uses declarative configurations to plan sweeps, launch and monitor Slurm jobs. | Experiment config, code revision, container, data revision and restart record. |
+
+**Post-training and evaluation.**
+
+| Question | Public resource | What it does | Inspect first |
+|---|---|---|---|
+| How are SFT and DPO runs configured? | [post-training](https://github.com/OpenEuroLLM/post-training) | Provides configuration-driven SFT/DPO with TRL or LlamaFactory backends and multi-node support. | YAML, data transforms, packing, loss mask and checkpoint lineage. |
+| How is benchmark overlap removed? | [post-training-decontamination](https://github.com/OpenEuroLLM/post-training-decontamination) | Indexes post-training datasets and searches benchmark overlap with n-gram matching. | Benchmark list, n-gram settings, removed IDs and output revision. |
+| How are standard tasks run on clusters? | [oellm-eval](https://github.com/OpenEuroLLM/oellm-eval) | Runs reproducible model/task evaluations across EuroHPC environments. | Task group, shot count, prompt, metric, harness commit and raw outputs. |
+| How are open-ended answers compared? | [JudgeArena](https://github.com/OpenEuroLLM/JudgeArena) | Runs pairwise and arena-style evaluations with swappable local or remote judges, including multilingual tasks. | Judge identity, baseline, task version, generation settings and resolved config. |
+
+These tools answer different questions. The Catalogue is a discovery layer;
+the Collection is a cycle-specific recipe; the Packer executes data
+transformations. `oellm-eval` runs task-based measurement, while JudgeArena
+compares generated answers through a judge. Neither result can be interpreted
+without its pinned configuration and raw outputs.
+
+## 20.6 Worked Paths Through Repositories and Data
+
+**Example A: from candidate corpus to base-model evidence.** Begin with the
+[Catalogue](https://github.com/OpenEuroLLM/training-data-catalogue) entry for a
+multilingual source such as HPLT or a domain-specific source such as FineMath.
+Review its origin, version, license notes and language coverage. In the
+[Collection](https://github.com/OpenEuroLLM/training-data-collection), specify
+the cycle, tokenizer, sampling rule and token budget. Run the
+[Packer](https://github.com/OpenEuroLLM/training-data-packer) with linting and
+record the resulting manifest. Use [AutoExp](https://github.com/OpenEuroLLM/oellm-autoexp)
+to launch a pinned training config, then evaluate the checkpoint with
+[oellm-eval](https://github.com/OpenEuroLLM/oellm-eval). The evidence chain is
+source version -> selected records -> packed tokens -> run config -> checkpoint
+-> evaluation output. This is an illustrative path, not an assertion about a
+specific published checkpoint.
+
+**Example B: from base checkpoint to an assistant.** Choose a base checkpoint
+and log its exact revision. Candidate SFT data include the published
+[translated Dolci instruction set](https://huggingface.co/datasets/openeurollm/Dolci-Instruct-SFT-translated);
+tool-use examples are available in
+[oellm-eu-tooluse-v1](https://huggingface.co/datasets/openeurollm/oellm-eu-tooluse-v1).
+The latter card currently labels its rows English, so its name alone is not
+evidence of multilingual tool-use coverage. Check dataset terms and benchmark
+overlap with [post-training-decontamination](https://github.com/OpenEuroLLM/post-training-decontamination),
+then configure SFT or DPO in [post-training](https://github.com/OpenEuroLLM/post-training).
+Compare the resulting model with its base and a fixed baseline using
+[JudgeArena](https://github.com/OpenEuroLLM/JudgeArena), and run the frozen task
+suite in `oellm-eval`. The published [9B SFT model card](https://huggingface.co/openeurollm/oellm-9b-256k-sft)
+is an example of reporting actual source and token shares, packing, hardware,
+loss mask, export checks and long-context probes. It does not imply that the
+candidate datasets above were included in that run.
+
+**Example C: from a reasoning dataset to a verifiable test.** The published
+[math RLVR](https://huggingface.co/datasets/openeurollm/oellm-math-rlvr)
+dataset contains multilingual prompts, ground truth, verifier metadata and
+contamination groups. The [code RLVR](https://huggingface.co/datasets/openeurollm/oellm-code-rlvr)
+dataset includes programming problems, tests and verifier fields; its card
+currently labels the prompt language English. Split by semantic or
+contamination group before training. Validate the verifier on a held-out set,
+track reward hacking and invalid outputs, and compare both capability gain and
+regression on non-reasoning tasks. Dataset availability is not proof that a
+specific model was RL-trained on it.
 
 # 21. Trade-Off Summary
 
